@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ceshi</title>
+    <script src="./jquery.min.js"></script>
+    <script src="./Upload/jquery.ui.widget.js"></script>
+    <script src="./Upload/jquery.iframe-transport.js"></script>
+    <script src="./Upload/jquery.fileupload.js"></script>
+    <script type="text/javascript">
+    $(function(){
+        //alert(1);
+        console.log( getUrlQuery() );
+    });
+    /*
+    获取url参数
+    */
+    function getUrlQuery() {
+        var urlStr = location.search.substr(1) ? location.search.substr(1) : "";
+        var urlArr = [];
+        for(var i = 0; i < urlStr.split("&").length; i++) {
+            urlArr.push(urlStr.split("&")[i].split("=")[0] ? urlStr.split("&")[i].split("=")[0] : "");
+            urlArr.push(urlStr.split("&")[i].split("=")[1] ? urlStr.split("&")[i].split("=")[1] : "");
+        }
+        if(urlStr == "") {
+            return;
+        } else {
+            var urlObj = {}
+            for(var i = 0; i < urlArr.length; i += 2) {
+                if(urlArr[i] != "") {
+                    urlObj[urlArr[i]] = decodeURIComponent(urlArr[i + 1]);
+                }
+            }
+            return urlObj;
+        }
+    }
+    /*
+    接口调用
+    */
+    function clickOn(){
+        $.ajax({
+            type: "POST",
+            url: "/api/postData",
+            data: {
+                "dataParams":{
+                    "name":"fhc",
+                    "dataParams":{"name":"fhc"},
+                    "listData":[{"name":"fhc"},{"name":"fhc"}],
+                },
+                "configParams":{
+                    host: "test.notaryexpress.cn",  
+                    port: 8001,  
+                    path: "/api/MyApi/test1"
+                }
+            },
+            async: true,
+            success: function (d) {
+                console.log(d);
+                d=JSON.parse(d);
+                d=JSON.parse(d.data);
+                console.log(d);
+            },
+            error: function () {
+                //alert("系统错误");
+            }
+        });
+        
+    }
+    /*
+    图片调用
+    */
+    function uploadFile() {
+        $("input[type='file']").fileupload({
+            dataType: 'json',
+            formData: {
+                "OrderNums": "1"
+            },
+            async: true,
+            add: function (e, data) {
+                
+                data.submit();
+            },
+            done: function (e, data) {
+                var result = data.result;
+                console.log(result);
+            }
+        });
+    };
+    </script>
+</head>
+<body>
+这是一个测试
+<img src="./1.jpg" style="width: 200px;height: 200px;"/>
+<br/>
+<input type="button" value="点击" onclick="clickOn()"/>
+<br/>
+<input type="file" value="" name="avatar" data-url="./api/fileData" onclick="uploadFile()" />
+</body>
+</html>
